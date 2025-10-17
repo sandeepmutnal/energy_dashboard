@@ -60,6 +60,5 @@ def upload():
 if __name__ == '__main__':
     if not os.path.exists('uploads'):
         os.mkdir('uploads')
-    # Force Flask to print logs
-    app.run(debug=True, use_reloader=True, host='127.0.0.1', port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
