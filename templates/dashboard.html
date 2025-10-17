@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forecast Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Energy Consumption Forecast</h1>
+        <canvas id="forecastChart"></canvas>
+
+        <h2>Forecasted Values (Next 7 Days)</h2>
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>Forecast (kWh)</th>
+            </tr>
+            {% for value in forecast %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="{{ url_for('index') }}" class="btn">Upload Another CSV</a>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <script>
+        const forecastData = {{ forecast|tojson }};
+        const labels = forecastData.map((_, i) => "Day " + (i + 1));
+
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Forecast Consumption (kWh)',
+                    data: forecastData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Next 7 Days Energy Forecast'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
